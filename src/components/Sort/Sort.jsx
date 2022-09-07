@@ -1,4 +1,15 @@
-export default function Sort(second) {
+import React from 'react'
+import { useState } from 'react'
+
+export default function Sort() {
+	const [open, setOpen] = useState(false)
+	const [selected, setSelected] = useState(0)
+
+	const onClickListItem = index => {
+		setSelected(index)
+		setOpen(false)
+	}
+	const list = ['популярности', 'цене', 'алфавиту']
 	return (
 		<div className='sort'>
 			<div className='sort__label'>
@@ -15,15 +26,24 @@ export default function Sort(second) {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span>популярности</span>
+				<span onClick={() => setOpen(!open)}>{list[selected]}</span>{' '}
+				{/*когда мы нажимает на один из элементов сортировки, то в selected лежит его индекс и по этому индексу через list[selected] мы можем отобразить его в данном спане*/}
 			</div>
-			<div className='sort__popup'>
-				<ul>
-					<li className='active'>популярности</li>
-					<li>цене</li>
-					<li>алфавиту</li>
-				</ul>
-			</div>
+			{open && (
+				<div className='sort__popup'>
+					<ul>
+						{list.map((name, index) => (
+							<li
+								className={selected === index ? 'active' : ''}
+								key={index}
+								onClick={() => onClickListItem(index)}
+							>
+								{name}
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 		</div>
 	)
 }
