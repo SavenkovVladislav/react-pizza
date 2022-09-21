@@ -26,7 +26,7 @@ export default function Sort() {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span onClick={() => setOpen(!open)}>{list[selected]}</span>{' '}
+				<span onClick={() => setOpen(!open)}>{list[selected]}</span>
 				{/*когда мы нажимает на один из элементов сортировки, то в selected лежит его индекс и по этому индексу через list[selected] мы можем отобразить его в данном спане*/}
 			</div>
 			{open && (
