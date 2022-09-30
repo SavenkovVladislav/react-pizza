@@ -1,15 +1,24 @@
 import React from 'react'
 import { useState } from 'react'
 
-export default function Sort() {
+export default function Sort({ value, onClickSort }) {
 	const [open, setOpen] = useState(false)
-	const [selected, setSelected] = useState(0)
 
 	const onClickListItem = index => {
-		setSelected(index)
+		onClickSort(index)
 		setOpen(false)
 	}
-	const list = ['популярности', 'цене', 'алфавиту']
+	const list = [
+		{ name: 'популярности ↓', sortProperty: 'rating', id: 0 },
+		{ name: 'популярности ↑', sortProperty: '-rating', id: 1 },
+
+		{ name: 'цене ↓', sortProperty: 'price', id: 2 },
+		{ name: 'цене ↑', sortProperty: '-price', id: 3 },
+
+		{ name: 'алфавиту ↓', sortProperty: 'title', id: 4 },
+		{ name: 'алфавиту ↑', sortProperty: '-title', id: 5 },
+	]
+
 	return (
 		<div className='sort'>
 			<div className='sort__label'>
@@ -26,19 +35,19 @@ export default function Sort() {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span onClick={() => setOpen(!open)}>{list[selected]}</span>
+				<span onClick={() => setOpen(!open)}>{value.name}</span>
 				{/*когда мы нажимает на один из элементов сортировки, то в selected лежит его индекс и по этому индексу через list[selected] мы можем отобразить его в данном спане*/}
 			</div>
 			{open && (
 				<div className='sort__popup'>
 					<ul>
-						{list.map((name, index) => (
+						{list.map(obj => (
 							<li
-								className={selected === index ? 'active' : ''}
-								key={index}
-								onClick={() => onClickListItem(index)}
+								className={value.id === obj.id && 'active'}
+								key={obj.id}
+								onClick={() => onClickListItem(obj)}
 							>
-								{name}
+								{obj.name}
 							</li>
 						))}
 					</ul>
