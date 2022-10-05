@@ -7,12 +7,16 @@
 	.container {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		gap: 20px;
 
-		@media (max-width: 660px) {
+		@media (max-width: 910px) {
 			flex-direction: column;
 			justify-content: center;
 			row-gap: 20px;
+
+			.header__cart {
+				margin: auto;
+			}
 		}
 	}
 
@@ -34,5 +38,9 @@
 		p {
 			color: #7b7b7b;
 		}
+	}
+
+	&__cart {
+		margin-left: auto;
 	}
 }
