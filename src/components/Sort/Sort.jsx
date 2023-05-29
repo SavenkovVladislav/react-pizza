@@ -1,11 +1,17 @@
 import React from 'react'
 import { useState } from 'react'
 
-export default function Sort({ value, onClickSort }) {
+import { useSelector, useDispatch } from 'react-redux'
+import { setSort } from '../../redux/slices/filterSlice'
+
+export default function Sort() {
+	const sort = useSelector(state => state.filterSlice.sort)
+	const dispatch = useDispatch()
+
 	const [open, setOpen] = useState(false)
 
-	const onClickListItem = index => {
-		onClickSort(index)
+	const onClickListItem = obj => {
+		dispatch(setSort(obj))
 		setOpen(false)
 	}
 	const list = [
@@ -35,7 +41,7 @@ export default function Sort({ value, onClickSort }) {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span onClick={() => setOpen(!open)}>{value.name}</span>
+				<span onClick={() => setOpen(!open)}>{sort.name}</span>
 				{/*когда мы нажимает на один из элементов сортировки, то в selected лежит его индекс и по этому индексу через list[selected] мы можем отобразить его в данном спане*/}
 			</div>
 			{open && (
@@ -43,7 +49,7 @@ export default function Sort({ value, onClickSort }) {
 					<ul>
 						{list.map(obj => (
 							<li
-								className={value.id === obj.id && 'active'}
+								className={sort.id === obj.id && 'active'}
 								key={obj.id}
 								onClick={() => onClickListItem(obj)}
 							>

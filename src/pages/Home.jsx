@@ -5,26 +5,25 @@ import Skeleton from '../components/PizzaBlock/Skeleton'
 import Pagination from '../components/Pagination/Pagination'
 
 import { useState, useEffect, useContext } from 'react'
+import { useSelector } from 'react-redux'
+
 import { SearchContext } from '../App'
 
 const Home = () => {
+	const { categoryId, sort } = useSelector(state => state.filterSlice)
+
 	const { searchValue } = useContext(SearchContext)
+
 	const [items, setItems] = useState([])
 	const [isLoading, setIsLoading] = useState(true)
-	const [categoryId, setCategoryId] = useState(0)
 	const [currentPage, setCurrentPage] = useState(1)
-	const [sortType, setSortType] = useState({
-		name: 'популярности',
-		sortProperty: 'rating',
-		id: 0,
-	})
 
 	// useEffect используется для того, чтобы код внутри него выполнился только тогда, когда изменятся переменные во массиве зависимостей useEffect. Если не использовать useEffect, тогда будет происходить запрос на сервер, после этого в items с помощью setItems(arr) будет записываться массив с сервера, после этого useState поменяется и ОПЯТЬ вызовет компонент App и снова выполнится запрос на сервер, тем самым эти запросы будут бесконечны.
 	useEffect(() => {
 		setIsLoading(true)
 
-		const order = sortType.sortProperty.includes('-') ? 'asc' : 'desc'
-		const sortBy = sortType.sortProperty.replace('-', '')
+		const order = sort.sortProperty.includes('-') ? 'asc' : 'desc'
+		const sortBy = sort.sortProperty.replace('-', '')
 		const category = categoryId > 0 ? `category=${categoryId}` : ''
 		const search = searchValue ? `&search=${searchValue}` : ''
 
@@ -42,7 +41,7 @@ const Home = () => {
 				setIsLoading(false)
 			})
 		window.scrollTo(0, 0)
-	}, [categoryId, sortType, searchValue, currentPage])
+	}, [categoryId, sort, searchValue, currentPage])
 
 	const pizzas = items.map(obj => <PizzaBlock key={obj.id} {...obj} />)
 
@@ -53,11 +52,8 @@ const Home = () => {
 	return (
 		<>
 			<div class='content__top'>
-				<Categories
-					value={categoryId}
-					onClickCategory={index => setCategoryId(index)}
-				/>
-				<Sort value={sortType} onClickSort={index => setSortType(index)} />
+				<Categories />
+				<Sort />
 			</div>
 			<h2 class='content__title'>Все пиццы</h2>
 			<div class='content__items'>{isLoading ? skeletons : pizzas}</div>

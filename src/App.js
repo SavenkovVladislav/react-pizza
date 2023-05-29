@@ -7,8 +7,9 @@ import Cart from './pages/Cart'
 import NotFound from './pages/NotFound'
 import NotFoundBlock from './components/NotFoundBlock/NotFoundBlock'
 
-import './scss/app.scss'
 import { useState } from 'react'
+
+import './scss/app.scss'
 
 export const SearchContext = React.createContext()
 
