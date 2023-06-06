@@ -1,13 +1,15 @@
-import Categories from '../components/Categories/Categories'
-import Sort from '../components/Sort/Sort'
-import PizzaBlock from '../components/PizzaBlock/PizzaBlock'
-import Skeleton from '../components/PizzaBlock/Skeleton'
-import Pagination from '../components/Pagination/Pagination'
+import axios from 'axios'
 
 import { useState, useEffect, useContext } from 'react'
 import { useSelector } from 'react-redux'
 
 import { SearchContext } from '../App'
+
+import Categories from '../components/Categories/Categories'
+import Sort from '../components/Sort/Sort'
+import PizzaBlock from '../components/PizzaBlock/PizzaBlock'
+import Skeleton from '../components/PizzaBlock/Skeleton'
+import Pagination from '../components/Pagination/Pagination'
 
 const Home = () => {
 	const { categoryId, sort } = useSelector(state => state.filterSlice)
@@ -27,25 +29,21 @@ const Home = () => {
 		const category = categoryId > 0 ? `category=${categoryId}` : ''
 		const search = searchValue ? `&search=${searchValue}` : ''
 
-		// когда произойдет запрос
-		fetch(
-			`https://632a9f84713d41bc8e735d54.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
-		)
-			//тогда (then) верни ответ в формате .json
+		axios
+			.get(
+				`https://632a9f84713d41bc8e735d54.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
+			)
 			.then(res => {
-				return res.json()
-			})
-			// после что-то происходит, нужно читать про фетч. Вроде он берет res и преобразует его в массив объектов
-			.then(arr => {
-				setItems(arr)
+				setItems(res.data)
 				setIsLoading(false)
 			})
+
 		window.scrollTo(0, 0)
 	}, [categoryId, sort, searchValue, currentPage])
 
 	const pizzas = items.map(obj => <PizzaBlock key={obj.id} {...obj} />)
 
-	const skeletons = [...new Array(6)].map((_, index) => (
+	const skeletons = [...new Array(4)].map((_, index) => (
 		<Skeleton key={index} />
 	))
 
