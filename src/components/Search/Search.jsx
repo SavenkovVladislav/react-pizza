@@ -1,15 +1,44 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useRef, useCallback, useState } from 'react'
+import debounce from 'lodash.debounce'
 import { SearchContext } from '../../App'
 
 import styles from './Search.module.scss'
 
 const Search = () => {
-	const { searchValue, setSearchValue } = useContext(SearchContext)
+	// зачем нужен этот костыль в виде локального стейта для инпута, объясняю в комментариях ниже
+	const [localSearchValue, setLocalSearchValue] = useState('')
+	const { setSearchValue } = useContext(SearchContext)
 	const inputRef = useRef()
 
 	const onCLickClear = () => {
 		setSearchValue('')
+		setLocalSearchValue('')
 		inputRef.current.focus()
+	}
+
+	const updsateSearchValue = useCallback(
+		debounce(str => {
+			console.log(str)
+			setSearchValue(str)
+		}, 500),
+		[]
+	)
+
+	// изначально код функции, которая пропихивалась в onChange инпута был следующий, а в value инпута было пропихнуто значение searchValue.
+	// в чем его проблема?
+	// когда в инпут что-то вводилось, то в нем ничего не появлялось. Это происходит из-за того, что значение value инпута было привязано к стейту searchValue, а изменяется этот searchValue только тогда, когда мы меняем его с помощью setSearchValue в который пропихиваем event.target.value, которое является ПУСТЫМ, потому что оно зависет от searchValue.
+	// const onChangeInput = useCallback(
+	// 	debounce(event => {
+	// 		console.log(event)
+	// 		setSearchValue(event.target.value)
+	// 	}, 500),
+	// 	[]
+	// )
+
+	// Решение следующее: создается локальный стейт localSearchValue, которое изменяется с помощью setLocalSearchValue. В value инпута записывается значение localSearchValue, которое изменяется при каждом изменении инпута, то есть в event.target.value у нас постоянно что-то есть, если мы что-то ввели. Далее этот event.target.value просто передаем в функцию updsateSearchValue, которая изменяет глобальный стейт с помощью setSearchValue(str)
+	const onChangeInput = event => {
+		setLocalSearchValue(event.target.value)
+		updsateSearchValue(event.target.value)
 	}
 
 	return (
@@ -26,12 +55,12 @@ const Search = () => {
 			</svg>
 			<input
 				ref={inputRef}
-				value={searchValue}
-				onChange={event => setSearchValue(event.target.value)}
+				value={localSearchValue}
+				onChange={onChangeInput}
 				className={styles.input}
 				placeholder='Поиск'
 			/>
-			{searchValue && (
+			{localSearchValue && (
 				<svg
 					className={styles.closeIcon}
 					onClick={onCLickClear}
